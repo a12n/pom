@@ -8,8 +8,8 @@ default_iters=4
 duration=$1
 user=$(id -un)
 
-iter=/tmp/pm-$user-iter
-end_time=/tmp/pm-$user-end_time
+iter=${TMPDIR:-/tmp}/pm-$user-iter
+end_time=${TMPDIR:-/tmp}/pm-$user-end_time
 
 value() {
     cat $1 2> /dev/null || echo $2
