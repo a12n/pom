@@ -8,8 +8,8 @@ default_iters=4
 duration=$1
 user=$(id -un)
 
-iter=${TMPDIR:-/tmp}/pm-$user-iter
-end_time=${TMPDIR:-/tmp}/pm-$user-end_time
+iter=${TMPDIR:-/tmp}/pom-$user-iter
+end_time=${TMPDIR:-/tmp}/pom-$user-end_time
 
 value() {
     cat $1 2> /dev/null || echo $2
@@ -61,7 +61,7 @@ pause() {
 
 interrupt() {
     rm -f $iter $end_time
-    pkill -u $user 'pm[bw]'
+    pkill -u $user 'pom[bw]'
 }
 
 time_left() {
@@ -76,18 +76,18 @@ time_left() {
 }
 
 case $0 in
-    *pmw)
-        pkill -u $user pmb
+    *pomw)
+        pkill -u $user pomb
         work &
         ;;
-    *pmb)
-        pkill -u $user pmw
+    *pomb)
+        pkill -u $user pomw
         pause &
         ;;
-    *pmi)
+    *pomi)
         interrupt
         ;;
-    *pml)
+    *poml)
         time_left
         ;;
 esac
