@@ -76,18 +76,18 @@ time_left() {
 }
 
 case $0 in
-    *pomw)
+    *pomwork)
         pkill -u $user pomb
         work &
         ;;
-    *pomb)
+    *pombreak)
         pkill -u $user pomw
         pause &
         ;;
-    *pomi)
+    *pomintrpt)
         interrupt
         ;;
-    *poml)
+    *pomleft)
         time_left
         ;;
 esac
