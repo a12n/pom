@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# © 2016 Anton Yabchinskiy
+#
+# Usage of the works is permitted provided that this instrument is
+# retained with the works, so that any entity that uses the works is
+# notified of this instrument.
+#
+# DISCLAIMER: THE WORKS ARE WITHOUT WARRANTY.
+
 default_work=25
 default_break1=5
 default_break2=25
