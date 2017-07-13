@@ -24,6 +24,10 @@ incr_value() {
     set_value $1 $((n + 1))
 }
 
+alarm() {
+    # TODO: play sound
+}
+
 sleep_min() {
     min=$1
     now=$(date +%s)
@@ -40,6 +44,7 @@ work() {
     notify-send "Work $duration min now."
     sleep_min $duration
     notify-send -t 3600000 "Take a break."
+    alarm
 }
 
 pause() {
@@ -57,6 +62,7 @@ pause() {
     fi
     sleep_min $duration
     notify-send -t 3600000 "Get back to work."
+    alarm
 }
 
 interrupt() {
