@@ -61,7 +61,7 @@ pause() {
 
 interrupt() {
     rm -f $iter $end_time
-    pkill -u $user 'pom[bw]'
+    pkill -u $user 'pom(break|work)'
 }
 
 time_left() {
@@ -77,11 +77,11 @@ time_left() {
 
 case $0 in
     *pomwork)
-        pkill -u $user pomb
+        pkill -u $user pombreak
         work &
         ;;
     *pombreak)
-        pkill -u $user pomw
+        pkill -u $user pomwork
         pause &
         ;;
     *pomintrpt)
