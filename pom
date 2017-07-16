@@ -15,6 +15,7 @@ default_iters=4
 
 duration=$1
 user=$(id -un)
+sound_file=${POM_SOUND_FILE:-/usr/share/sounds/freedesktop/stereo/complete.oga}
 
 iter=${TMPDIR:-/tmp}/pom-$user-iter
 end_time=${TMPDIR:-/tmp}/pom-$user-end_time
@@ -33,7 +34,9 @@ incr_value() {
 }
 
 alarm() {
-    # TODO: play sound
+    if [ -f $sound_file ]; then
+        play -q $sound_file
+    fi
 }
 
 sleep_min() {
