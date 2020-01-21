@@ -6,6 +6,7 @@ set of shell commands.
 ## `tomnext [minutes]`
 
 Do the next reasonable thing with the timer:
+
 - set the pomodoro timer for work (default to 25 minutes).
 - set the timer for a break (default to either 5 or 25 minutes,
   depending on the number of complete work intervals).
@@ -28,6 +29,7 @@ Debian).
 # Configuration
 
 The following environment variables may be used to configure the script:
+
 - `TOM_WORK_DUR` — work time duration in minutes.
 - `TOM_SHORT_BREAK_DUR` — short break duration in minutes.
 - `TOM_LONG_BREAK_DUR` — long break duration in minutes.
