@@ -1,0 +1,129 @@
+#!/bin/sh
+
+# © 2020 Anton Yabchinskiy
+#
+# Usage of the works is permitted provided that this instrument is
+# retained with the works, so that any entity that uses the works is
+# notified of this instrument.
+#
+# DISCLAIMER: THE WORKS ARE WITHOUT WARRANTY.
+
+work_dur=${TOM_WORK_DUR:-25}
+short_break_dur=${TOM_SHORT_BREAK_DUR:-5}
+long_break_dur=${TOM_LONG_BREAK_DUR:-25}
+iters_mult=${TOM_ITERS_MULT:-4}
+
+##########
+# State  #
+##########
+
+state_file=${TMPDIR:-/tmp}/tom-$(id -u)
+
+read work_next done_iters end_time sleep_pid 2> /dev/null < $state_file || {
+    work_next=-1
+    done_iters=0
+    end_time=-1
+    sleep_pid=0
+}
+
+write_state() {
+    echo $work_next $done_iters $end_time $sleep_pid > $state_file
+}
+
+#################
+# Notifications #
+#################
+
+play_sound() {
+    canberra-gtk-play -i complete 2> /dev/null &
+}
+
+show_notification() {
+    message=$1
+    urg=${2:-normal}
+    notify-send -u $urg "$message"
+}
+
+########
+# Main #
+########
+
+do_work() {
+    dur=$1
+    show_notification "Work for $dur minutes"
+    sleep $((dur * 60))
+    play_sound
+    show_notification "Take a break" critical
+    # Update state
+    done_iters=$((done_iters + 1))
+    work_next=0
+    end_time=-1
+    write_state
+}
+
+do_break() {
+    dur=$1
+    descr=$2
+    show_notification "Take a $descr break ($dur min)"
+    sleep $((dur * 60))
+    play_sound
+    show_notification "Get back to work" critical
+    # Update state
+    work_next=1
+    end_time=-1
+    write_state
+}
+
+time_left() {
+    now=$(date +%s)
+    if [ $end_time -ge $now ]; then
+        left=$((end_time - now))
+        printf "%02d:%02d\n" $((left / 60)) $((left % 60))
+    else
+        exit 1
+    fi
+}
+
+case $0 in
+    *tomreset)
+        # Reset everything
+        if [ $sleep_pid -gt 0 ]; then
+            kill $sleep_pid
+        fi
+        rm -f $state_file
+        ;;
+    *tomleft)
+        # Report time left
+        time_left
+        ;;
+    *tomnext)
+        # Next reasonable thing
+        if [ $end_time -gt -1 ]; then
+            # Timer started
+            time_left
+        else
+            now=$(date +%s)
+            if [ $work_next -ne 0 ]; then
+                # Work
+                dur=${1:-$work_dur}
+                end_time=$((now + dur * 60))
+                do_work $dur &
+            else
+                if [ $done_iters -ge $iters_mult ]; then
+                    # Long break
+                    dur=${1:-$long_break_dur}
+                    descr="longer"
+                    done_iters=0
+                else
+                    # Short break
+                    dur=${1:-$short_break_dur}
+                    descr="short"
+                fi
+                end_time=$((now + dur * 60))
+                do_break $dur $descr &
+            fi
+            sleep_pid=$!
+            write_state
+        fi
+        ;;
+esac
